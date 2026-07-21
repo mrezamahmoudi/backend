@@ -160,7 +160,6 @@ func main() {
 		fmt.Printf("کلید %s مپ شد روی: %s\n", key, ch.GetServer(key))
 	}
 }
-‍‍‍```
 
 ## ۵. محدودسازی نرخ درخواست (Token Bucket Rate Limiter)
 
