@@ -173,8 +173,11 @@ func main() {
 
 ### 💻 پیاده‌سازی کامل بدون Thread جداگانه (Python)
 
+### 💻 پیاده‌سازی کامل بدون Thread جداگانه (Python)
+
 ```python
 import time
+
 
 class TokenBucket:
     def __init__(self, capacity: int, fill_rate: float):
@@ -194,6 +197,7 @@ class TokenBucket:
 
         # ۱. محاسبه توکن‌های اضافه شده بر اساس زمان گذشته
         self.tokens += time_passed * self.fill_rate
+
         if self.tokens > self.capacity:
             self.tokens = self.capacity
 
@@ -201,13 +205,24 @@ class TokenBucket:
         if self.tokens >= tokens_needed:
             self.tokens -= tokens_needed
             return True
+
         return False
 
 
 # --- تست الگوریتم ---
+
 limiter = TokenBucket(capacity=3, fill_rate=1.0)
 
 # ارسال ۴ درخواست پشت سر هم
 for i in range(1, 5):
     allowed = limiter.allow_request()
     print(f"درخواست {i}: {'✅ تایید شد' if allowed else '❌ رد شد (429)'}")
+
+time.sleep(2)
+
+print("\nبعد از ۲ ثانیه:")
+
+for i in range(5, 8):
+    allowed = limiter.allow_request()
+    print(f"درخواست {i}: {'✅ تایید شد' if allowed else '❌ رد شد (429)'}")
+```
