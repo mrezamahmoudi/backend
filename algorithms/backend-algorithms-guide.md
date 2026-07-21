@@ -82,7 +82,7 @@ def dijkstra(graph, start):
                 distances[neighbor] = dist
                 heapq.heappush(pq, (dist, neighbor))
     return distances
-
+```
 
 ## ۴. هشینگ یکنواخت (Consistent Hashing)
 
