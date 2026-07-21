@@ -84,8 +84,6 @@ def dijkstra(graph, start):
     return distances
 
 
----
-
 ## ۴. هشینگ یکنواخت (Consistent Hashing)
 
 ### ❓ مسئله
