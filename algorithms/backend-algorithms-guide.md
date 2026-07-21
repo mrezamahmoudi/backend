@@ -160,3 +160,55 @@ func main() {
 		fmt.Printf("کلید %s مپ شد روی: %s\n", key, ch.GetServer(key))
 	}
 }
+‍‍‍```
+
+## ۵. محدودسازی نرخ درخواست (Token Bucket Rate Limiter)
+
+### ❓ کاربرد
+جلوگیری از اسپم، حملات DDoS و کنترل ترافیک ورودی APIها.
+
+### 💡 نحوه کار
+* یک سطل با ظرفیت $N$ توکن داریم که با نرخ ثابت (مثلاً ۱ توکن/ثانیه) پر می‌شود.
+* هر درخواست ۱ توکن مصرف می‌کند. اگر سطل خالی باشد، خطای **429 Too Many Requests** صادر می‌شود.
+* **مزیت:** پشتیبانی از **Burst Traffic** (ارسال چند درخواست همزمان در صورت پر بودن سطل).
+
+### 💻 پیاده‌سازی کامل بدون Thread جداگانه (Python)
+
+```python
+import time
+
+class TokenBucket:
+    def __init__(self, capacity: int, fill_rate: float):
+        """
+        capacity: حداکثر ظرفیت سطل (Burst limit)
+        fill_rate: تعداد توکن‌های اضافه شده در هر ثانیه
+        """
+        self.capacity = capacity
+        self.fill_rate = fill_rate
+        self.tokens = capacity
+        self.last_update = time.time()
+
+    def allow_request(self, tokens_needed: int = 1) -> bool:
+        now = time.time()
+        time_passed = now - self.last_update
+        self.last_update = now
+
+        # ۱. محاسبه توکن‌های اضافه شده بر اساس زمان گذشته
+        self.tokens += time_passed * self.fill_rate
+        if self.tokens > self.capacity:
+            self.tokens = self.capacity
+
+        # ۲. بررسی امکان انجام درخواست
+        if self.tokens >= tokens_needed:
+            self.tokens -= tokens_needed
+            return True
+        return False
+
+
+# --- تست الگوریتم ---
+limiter = TokenBucket(capacity=3, fill_rate=1.0)
+
+# ارسال ۴ درخواست پشت سر هم
+for i in range(1, 5):
+    allowed = limiter.allow_request()
+    print(f"درخواست {i}: {'✅ تایید شد' if allowed else '❌ رد شد (429)'}")
